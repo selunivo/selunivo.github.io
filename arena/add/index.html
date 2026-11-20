@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>친구 추가 — Triple Pocket Arena</title>
+  <!-- Friend invite link page (R5-7, docs/SERVER.md 19). Not published: publish only after
+       the user approves (docs/SERVER.md 19.4). https://selunivo.github.io/arena/add?c=<CODE>
+       opens the app directly when Android verifies the App Link; otherwise this page shows,
+       and 앱에서 열기 hands the same link to the app by package (intent://), or opens the
+       Play Store when the app is not installed. KakaoTalk's in-app browser is sent to the
+       phone's browser first. The page loads nothing from other sites and keeps no data. -->
+  <style>
+    :root { --bg: #fbf6ec; --card: #fffdf8; --ink: #3b2f22; --muted: #7a6a58; --accent: #5f8f6b; --edge: #e6dccb; --code: #b0791c; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #1d1a16; --card: #26221d; --ink: #f1e9dc; --muted: #b8a993; --accent: #8cc29a; --edge: #3a342c; --code: #ffd36a; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+    main { max-width: 480px; margin: 0 auto; padding: 40px 16px; text-align: center; }
+    .card { background: var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+    h1 { font-size: 24px; margin: 0 0 8px; }
+    .code { font-size: 34px; font-weight: 800; letter-spacing: 2px; color: var(--code); margin: 8px 0 4px; }
+    .btn { display: block; width: 100%; padding: 14px; margin: 12px 0 0; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .btn.second { background: transparent; color: var(--ink); border: 1px solid var(--edge); }
+    p { margin: 0 0 8px; }
+    .muted { color: var(--muted); font-size: 15px; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <h1>트리플 포켓 아레나 친구 추가</h1>
+      <div id="ok" hidden>
+        <p class="muted">친구 코드</p>
+        <div class="code" id="code"></div>
+        <a class="btn" id="open" href="#">앱에서 열기</a>
+        <p class="muted" id="hint">앱이 열리면 친구 신청을 보낼지 한 번 더 물어봐요.</p>
+        <p class="muted" id="kakao" hidden>카카오톡 안에서는 앱이 열리지 않을 수 있어요. 오른쪽 아래 더보기(⋮)에서 <b>다른 브라우저로 열기</b>를 눌러 주세요.</p>
+        <p class="muted" id="other" hidden>안드로이드 휴대폰에서 이 링크를 열거나, 앱의 <b>친구 목록 → 친구 추가</b>에 위 코드를 입력해 주세요.</p>
+        <button class="btn second" id="copy" type="button">코드 복사</button>
+      </div>
+      <p id="bad" hidden>링크가 올바르지 않아요. 친구에게 링크를 다시 받아 주세요.</p>
+    </section>
+    <p class="muted"><a href="https://play.google.com/store/apps/details?id=com.selunivo.game.triplepocketarena" id="store">앱 받기 (Google Play)</a></p>
+  </main>
+  <script>
+    (function () {
+      var PACKAGE = "com.selunivo.game.triplepocketarena";
+      var STORE = "https://play.google.com/store/apps/details?id=" + PACKAGE;
+      var ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      var raw = new URLSearchParams(location.search).get("c") || "";
+      var code = raw.toUpperCase().replace(/[-\s]/g, "");
+      var valid = code.length === 8 && code.split("").every(function (ch) { return ALPHABET.indexOf(ch) >= 0; });
+      if (!valid) { document.getElementById("bad").hidden = false; return; }
+      document.getElementById("ok").hidden = false;
+      document.getElementById("code").textContent = code.slice(0, 4) + "-" + code.slice(4);
+      var ua = navigator.userAgent;
+      var android = /Android/i.test(ua);
+      var kakao = /KAKAOTALK/i.test(ua);
+      // The canonical link, whatever address this page was opened at.
+      var link = "selunivo.github.io/arena/add?c=" + code;
+      var open = document.getElementById("open");
+      open.href = "intent://" + link + "#Intent;scheme=https;package=" + PACKAGE +
+        ";S.browser_fallback_url=" + encodeURIComponent(STORE) + ";end";
+      if (!android) {
+        open.hidden = true;
+        document.getElementById("hint").hidden = true;
+        document.getElementById("other").hidden = false;
+      }
+      if (kakao) {
+        document.getElementById("kakao").hidden = false;
+        if (android) location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent("https://" + link);
+      }
+      document.getElementById("copy").addEventListener("click", function () {
+        var btn = this;
+        var done = function () { btn.textContent = "복사했어요"; };
+        if (navigator.clipboard) navigator.clipboard.writeText(code).then(done, function () {});
+      });
+    })();
+  </script>
+</body>
+</html>

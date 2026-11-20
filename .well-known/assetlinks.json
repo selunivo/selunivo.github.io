@@ -1,0 +1,16 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.selunivo.game.triplepocketarena",
+      "sha256_cert_fingerprints": [
+        "A8:97:7E:C1:27:57:FE:C5:53:B6:B4:0A:3C:8E:76:15:BA:47:8A:64:F3:F4:E5:81:FE:99:94:1D:58:EE:2A:7E",
+        "52:D8:31:FF:B7:09:A1:E7:7C:6B:83:08:DE:2E:5E:D0:F0:72:C8:65:77:9A:55:02:F7:4C:76:F5:D8:36:58:95",
+        "2F:BE:80:E2:54:7C:B5:E8:E7:C1:3C:5E:DA:E3:75:6A:A2:CF:DE:D5:B2:A5:D6:F9:28:1A:2E:14:82:23:FA:60"
+      ]
+    }
+  }
+]
